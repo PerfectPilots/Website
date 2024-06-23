@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METAR Screen</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #33ff33;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .metar-screen {
+            background-color: #000;
+            color: #33ff33;
+            border: 2px solid #444;
+            width: 90%;
+            max-width: 900px;
+            height: 90%;
+            max-height: 600px;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .title {
+            color: #ffcc00;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: capitalize; /* Capitalize first letter of each word */
+        }
+        .metar-data {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .column {
+            width: 48%;
+        }
+        .decoded-info {
+            margin-bottom: 10px;
+        }
+        .decoded-info p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .decoded-info span {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        .footer {
+            font-size: 14px;
+            text-align: center;
+            color: #666; /* Slightly darker color for better contrast */
+            margin-top: 10px; /* Add some space above the footer */
+            padding: 10px 0; /* Add padding for better spacing */
+        }
+        .footer a {
+            color: #3366cc; /* Change link color */
+            text-decoration: none; /* Remove underline from links */
+        }
+        .footer a:hover {
+            text-decoration: underline; /* Add underline on hover */
+        }
+        .metar-screen {
+            padding-bottom: 20px; /* Add padding to the bottom of the container */
+        }
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            width: 100px;
+        }
+        button {
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="metar-screen">
+        <div class="title">Metar Information</div> <!-- Capitalized title -->
+        <div class="input-container">
+            <input type="text" id="icao-input" placeholder="ICAO" maxlength="4">
+            <button onclick="fetchMetar()">Fetch METAR</button>
+        </div>
+        <div id="metar-data" class="line"><span class="highlight">Loading...</span></div>
+        <div class="metar-data">
+            <div class="column">
+                <div class="decoded-info" id="sky"></div>
+                <div class="decoded-info" id="visibility"></div>
+                <div class="decoded-info" id="present-wx"></div>
+                <div class="decoded-info" id="remarks"></div>
+            </div>
+            <div class="column">
+                <div class="decoded-info" id="temp-dewpt"></div>
+                <div class="decoded-info" id="wind-dir-spd"></div>
+                <div class="decoded-info" id="Pressure"></div>
+            </div>
+        </div>
+        <div class="footer">
+            Last updated: <span id="last-updated"></span> UTC <br>
+            Data source: <a href="https://metar.vatsim.net/${icaoCode}">VATSIM API</a> <br>
+            Virtual Pilot Institute website: <a href="https://virtualpilotinstitute.org/">Virtual Pilot Institute</a> <br>
+            Created by Total Aviation <br> 
+            Version: 0.0.3
+        </div>        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const path = window.location.pathname; // Get the path part of the URL
+            const icaoCode = path.split('/').pop().toUpperCase(); // Extract the last part of the path as the ICAO code
+            fetchMetarData(icaoCode);
+        });
+
+        document.getElementById('icao-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                fetchMetar();
+            }
+        });
+
+        function fetchMetar() {
+            const icaoInput = document.getElementById('icao-input');
+            const icaoCode = icaoInput.value.toUpperCase();
+            icaoInput.value = icaoCode; // Ensure the input is capitalized
+            fetchMetarData(icaoCode);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchMetarData('EGJB'); // Default to Guernsey Airport
+        });
+
+        async function fetchMetarData(icaoCode) {
+            try {
+                const response = await fetch(`https://metar.vatsim.net/${icaoCode}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const metarText = await response.text();
+                displayMetarInfo(metarText);
+            } catch (error) {
+                console.error('Error fetching METAR data:', error);
+            }
+        }
+
+        function displayMetarInfo(metarData) {
+            const metarInfo = document.getElementById('metar-data');
+            metarInfo.textContent = metarData.trim();
+            const date = new Date();
+            const lastUpdatedElement = document.getElementById('last-updated');
+            lastUpdatedElement.textContent = `${formatDate(date)} ${formatTime(date)}`;
+
+            const decodedMetar = decodeMetar(metarData);
+            const decodedMetarDivs = document.querySelectorAll('.decoded-info');
+            decodedMetarDivs.forEach(function(element) {
+                const id = element.id;
+                if (decodedMetar.hasOwnProperty(id)) {
+                    element.innerHTML = `<p>${id === 'temp-dewpt' ? 'Temperature / Dew Point' : id === 'wind-dir-spd' ? 'Wind' : id}: <span>${decodedMetar[id]}</span></p>`;
+                } else {
+                    element.innerHTML = `<p>${id}: <span>Not available</span></p>`;
+                }
+            });
+        }
+
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function formatTime(date) {
+            return date.toISOString().substring(11, 16); // 24-hour format
+        }
+
+        function decodeMetar(metarData) {
+            const decodedMetar = {};
+
+            // Extract temperature and dew point separately
+            const temperatureMatch = metarData.match(/(?:\s|\/)(M?\d{2})\/(M?\d{2})\s/);
+            if (temperatureMatch) {
+                const temperature = temperatureMatch[1];
+                const dewPoint = temperatureMatch[2];
+                decodedMetar['temp-dewpt'] = `${temperature}°C / ${dewPoint}°C`;
+            } else {
+                decodedMetar['temp-dewpt'] = 'Not available';
+            }
+
+            // Extract visibility
+            const visibilityMatch = metarData.match(/(\d{4})\s?([A-Z]{2})?/);
+            if (visibilityMatch) {
+                const visibility = visibilityMatch[1];
+                decodedMetar['visibility'] = `${visibility} meters`;
+            } else {
+                decodedMetar['visibility'] = 'Not available';
+            }
+
+            // Extract clouds
+            const cloudRegex = /\b(?:FEW|SCT|BKN|OVC|VV|\/\/\/)\d{3}(?:\s(?:CB|TCU|\/\/\/))?/g;
+            const cloudMatches = metarData.match(cloudRegex);
+            if (cloudMatches) {
+                decodedMetar['sky'] = cloudMatches.join(', ');
+            } else {
+                decodedMetar['sky'] = 'No significant clouds';
+            }
+
+            // Extract wind
+            const windMatch = metarData.match(/(\d{3}|VRB)(\d{2,3})KT/);
+            if (windMatch) {
+                const windDirection = windMatch[1];
+                const windSpeed = windMatch[2];
+                decodedMetar['wind-dir-spd'] = `${windDirection === 'VRB' ? 'Variable direction' : windDirection + '°'} at ${windSpeed} knots`;
+            } else {
+                decodedMetar['wind-dir-spd'] = 'Not available';
+            }
+
+            // Extract pressure
+            const pressureMatch = metarData.match(/Q(\d{4})/);
+            if (pressureMatch) {
+                const pressure = pressureMatch[1];
+                decodedMetar['Pressure'] = `${pressure} hPa`;
+            } else {
+                decodedMetar['Pressure'] = 'Not available';
+            }
+
+            // Extract remarks
+            const remarksMatch = metarData.match(/RMK\s(.+)/);
+            if (remarksMatch) {
+                const remarks = remarksMatch[1];
+                decodedMetar['remarks'] = remarks;
+
+                // Extract active runway from remarks
+                const activeRunwayMatch = remarks.match(/RWY\s(\d{2})/);
+                if (activeRunwayMatch) {
+                    const activeRunway = activeRunwayMatch[1];
+                    decodedMetar['remarks'] += `, Active Runway: ${activeRunway}`;
+                }
+            } else {
+                decodedMetar['remarks'] = 'No significant weather observed';
+            }
+
+            return decodedMetar;
+        }
+    </script>
+</body>
+</html>
