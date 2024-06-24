@@ -9,6 +9,10 @@ body, html {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     background-color: #f5f5f5; /* Light gray background */
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Navbar */
@@ -69,7 +73,7 @@ body, html {
 .home-section {
     background-image: 
         linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-        url("./images/13_Apr_GCI_Aurigny_001.png");
+        url("../staging/images/13_Apr_GCI_Aurigny_001.png");
     background-size: cover;
     background-position: center;
     color: #ffffff; /* White text for better readability */
@@ -117,6 +121,7 @@ body, html {
 .home-content .btn:hover {
     background-color: #0a457c; /* Darker blue on hover */
 }
+
 /* About Section */
 .about-section {
     background-color: #0c54a1; /* Dark blue background */
@@ -250,6 +255,7 @@ body, html {
 .apply-button .btn:hover {
     background-color: #0a457c; /* Darker blue on hover */
 }
+
 /* Reviews Section */
 .reviews-section {
     background-color: #f0f0f0; /* Light gray background */
@@ -317,7 +323,6 @@ body, html {
     line-height: 1.6;
 }
 
-
 /* Contact Section */
 .contact-section {
     background-color: #0c54a1; /* Dark blue background */
@@ -378,6 +383,7 @@ body, html {
     color: #ffffff;
     padding: 20px 0;
     text-align: center;
+    margin-top: auto;
 }
 
 .footer p {
@@ -448,6 +454,7 @@ body, html {
         text-align: center; /* Center align content on smaller screens */
     }
 }
+
 /* Careers Section */
 .careers-section {
     padding: 100px 0;
@@ -507,4 +514,20 @@ body, html {
 
 .job .btn:hover {
     background-color: #0a457c;
+}
+
+/* No Job Listings Section */
+.no-job-listings {
+    padding: 40px 0;
+    background-color: #f9f9f9;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.no-job-listings p {
+    font-size: 18px;
+    color: #555;
+    margin: 0;
 }
