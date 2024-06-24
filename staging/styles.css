@@ -67,27 +67,46 @@ body, html {
 
 /* Home Section */
 .home-section {
-    background-image: url("./images/13_Apr_GCI_Aurigny_001.png"); /* Replace with your actual background image */
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        url("./images/13_Apr_GCI_Aurigny_001.png");
     background-size: cover;
     background-position: center;
-    color: #ffffff; /* White text */
+    color: #ffffff; /* White text for better readability */
     text-align: center;
-    padding: 200px 0; /* Adjusted padding for spacing */
+    padding: 150px 0; /* Adjusted padding for spacing */
 }
 
-.home-content h1 {
+.home-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #0c54a1; /* Dark blue text for readability */
+}
+
+.home-content .container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.home-section h1 {
     font-size: 48px; /* Larger font size */
     margin-bottom: 20px; /* Spacing below heading */
+    text-align: center;
+    font-weight: bold;
 }
 
-.home-content p {
+.home-section p {
     font-size: 24px; /* Larger font size */
     margin-bottom: 40px; /* Spacing below paragraph */
+    line-height: 1.6;
+    color: #ffffff; /* Darker text for better readability */
 }
 
 .home-content .btn {
-    padding: 12px 24px; /* Larger button padding */
-    font-size: 18px; /* Larger button text */
+    padding: 14px 28px; /* Larger button padding */
+    font-size: 20px; /* Larger button text */
     text-decoration: none;
     background-color: #0c54a1; /* Dark blue button background */
     color: #ffffff; /* White button text color */
@@ -98,30 +117,6 @@ body, html {
 .home-content .btn:hover {
     background-color: #0a457c; /* Darker blue on hover */
 }
-.home-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color:#0c54a1;
-}
-
-.home-content .container {
-    max-width: 800px;
-    margin: auto;
-}
-
-.home-section h1 {
-    font-size: 48px; /* Larger font size for emphasis */
-    margin-bottom: 20px;
-}
-
-.home-section p {
-    font-size: 24px; /* Larger font size for clarity */
-    margin-bottom: 40px;
-    line-height: 1.6;
-}
-
 /* About Section */
 .about-section {
     background-color: #0c54a1; /* Dark blue background */
@@ -452,4 +447,64 @@ body, html {
     .about-section .about-content {
         text-align: center; /* Center align content on smaller screens */
     }
+}
+/* Careers Section */
+.careers-section {
+    padding: 100px 0;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.careers-section .container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.careers-section h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #0c54a1;
+}
+
+.careers-section p {
+    font-size: 18px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.job-listings .job {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.job h2 {
+    font-size: 24px;
+    color: #0c54a1;
+    margin-bottom: 10px;
+}
+
+.job p {
+    font-size: 16px;
+    color: #555;
+}
+
+.job .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0c54a1;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.job .btn:hover {
+    background-color: #0a457c;
 }
